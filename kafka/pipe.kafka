@@ -1,0 +1,16 @@
+CONSUMER streams-pipe-input-consumer
+topic: streams-pipe-input
+partitions: 0
+from: 1
+
+CONSUMER streams-pipe-output-consumer
+topic: streams-pipe-output
+partitions: 0
+from: 1
+
+PRODUCER streams-pipe-producer
+topic: streams-pipe-input
+key: key-gerry
+body-gerry
+
+###
