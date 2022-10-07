@@ -9,35 +9,30 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.gk.aws.msk.demo.config.KafkaConfiguration;
 
 @Service
 public class PipeStreamService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PipeStreamService.class);
 
-	private KafkaStreams streams = null;
-	private Topology topology = null;
-	private final StreamsBuilder builder = new StreamsBuilder();
-	private final Properties props = new Properties();
-	
-	public static String INPUT_TOPIC = "streams-pipe-input";
-	public static String OUTPUT_TOPIC = "streams-pipe-output";
-	
-	public Topology getTopology() {
-		return topology;
-	}
-	
-	public Properties getProperties() {
-		return props;
-	}
+	private KafkaConfiguration kafkaConfiguration;
 
-	public PipeStreamService() {
+	private String INPUT_TOPIC;
+	private String OUTPUT_TOPIC;
+
+	@Autowired
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration) {
 		super();
-		// TODO Auto-generated constructor stub
+		this.kafkaConfiguration = kafkaConfiguration;
+		INPUT_TOPIC = kafkaConfiguration.getInputTopic();
+		OUTPUT_TOPIC = kafkaConfiguration.getOutputTopic();
 
-		props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-pipe");
-		props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+		props.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaConfiguration.getApplicationId());
+		props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfiguration.getBootstrapServers());
 		props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		
@@ -47,6 +42,37 @@ public class PipeStreamService {
         
         streams = new KafkaStreams(topology, props);
 	}
+
+	private KafkaStreams streams = null;
+	private Topology topology = null;
+	private final StreamsBuilder builder = new StreamsBuilder();
+	private final Properties props = new Properties();
+	
+
+	
+	public Topology getTopology() {
+		return topology;
+	}
+	
+	public Properties getProperties() {
+		return props;
+	}
+
+	// public PipeStreamService() {
+	// 	super();
+	// 	// TODO Auto-generated constructor stub
+
+	// 	props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-pipe");
+	// 	props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+	// 	props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+	// 	props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+		
+	// 	builder.stream(INPUT_TOPIC).to(OUTPUT_TOPIC);
+		
+    //     topology = builder.build();
+        
+    //     streams = new KafkaStreams(topology, props);
+	// }
 
 	public void start() {
 		LOGGER.info("Pipe Stream Service started.");
