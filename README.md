@@ -118,3 +118,41 @@ public static void getSecret() {
 ```
 
 Requires AWS Java SDK.  See: https://github.com/aws/aws-sdk-java-v2/#using-the-sdk
+
+
+## VS code setup
+
+### define a .env file
+
+```
+AWS_SECRETS_PATH=secrets
+```
+
+### .vscode/launch.json file
+
+`Note` that the .env file is configured here.
+
+```
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch DemoApplication",
+            "request": "launch",
+            "mainClass": "com.gk.aws.msk.demo.DemoApplication",
+            "projectName": "demo",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
+```
