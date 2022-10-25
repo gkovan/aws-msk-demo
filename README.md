@@ -128,6 +128,19 @@ Requires AWS Java SDK.  See: https://github.com/aws/aws-sdk-java-v2/#using-the-s
 AWS_SECRETS_PATH=secrets
 ```
 
+### Create secrets file
+
+Create file called ./secrets/amazonmsk-fltops-msapp-user
+
+Contents of file should be in form:
+
+```
+{
+    "username": "gerry",
+    "password": "dummypw"
+}
+```
+
 ### .vscode/launch.json file
 
 `Note` that the .env file is configured here.
