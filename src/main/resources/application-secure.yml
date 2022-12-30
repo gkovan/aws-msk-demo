@@ -1,0 +1,18 @@
+awsSecrets:
+    mskSecret: amazonmsk-fltops-msapp-user
+spring:
+  application:
+    name: "${IMAGE_NAME:streams-pipe-demo}"
+
+kafka:
+    bootstrapServers: ${BOOTSTRAP_SERVERS:localhost:9092}
+    inputTopic: ${PIPE_INPUT_TOPIC:streams-pipe-input}
+    outputTopic: ${PIPE_OUTPUT_TOPIC:streams-pipe-output}
+    applicationId: ${APPLICATION_ID:streams-pipe}
+    
+    security:
+        security-protocol: SASL_SSL
+        sasl-mechanism: SCRAM-SHA-512
+        ssl-protocol: TLSv1.2
+        ssl-enabled-protocols: TLSv1.2
+        ssl-endpoint-identification-algorithm: HTTPS

@@ -19,10 +19,11 @@ public class KafkaConfiguration {
     private String outputTopic;
     private SaslJaasConfig saslJaasConfig;
 
-    @Autowired
-    public void setSaslJaasConfig(SaslJaasConfig saslJaasConfig) {
-        this.saslJaasConfig = saslJaasConfig;
-    }
+//Uncomment when adding SASL/SCRAM security    
+//    @Autowired
+//    public void setSaslJaasConfig(SaslJaasConfig saslJaasConfig) {
+//        this.saslJaasConfig = saslJaasConfig;
+//    }
     
     @Getter
     @Setter
