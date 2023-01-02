@@ -3,7 +3,11 @@ aws msk demo app
 
 ## Kafka setup on local laptop
 
-Intall Kafka 2.6.2
+Intall Kafka 2.8.1
+
+```
+wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.13-2.8.1.tgz
+```
 
 Start Zookeeper
 
