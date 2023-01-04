@@ -32,8 +32,12 @@ public class ProducerController {
         return "hello";
     }
 
+    /*
+     * HTTP GET request for testing purposes.  Request is hard coded.
+     */
     @GetMapping("/producer")
     public PipeProducerResponse produceRecord() {
+        // Hard code a request.
         PipeProducerRequest request = new PipeProducerRequest();
         request.setKafkaBody("this is the kafka body" + UUID.randomUUID().toString());
         request.setKafkaHeader("this is the kafka header");
@@ -45,6 +49,17 @@ public class ProducerController {
         return response;
     }
 
+    @PostMapping("/producer")
+    public PipeProducerResponse produceRecord(@RequestBody PipeProducerRequest request) {
+
+        PipeProducerResponse response = producerService.produceRecordSynchronous(request);
+        
+        return response;
+    }
+
+    /*
+     * HTTP GET request for testing purposes.  Request is hard coded.
+     */
     @GetMapping("/produce-asynch")
     public PipeProducerResponse produceRecordAsync() {
         PipeProducerRequest request = new PipeProducerRequest();
@@ -56,10 +71,10 @@ public class ProducerController {
         return response;
     }
 
-    @PostMapping("/producer")
-    public PipeProducerResponse produceRecord(@RequestBody PipeProducerRequest request) {
+    @PostMapping("/produce-asynch")
+    public PipeProducerResponse produceRecordAsynch(@RequestBody PipeProducerRequest request) {
 
-        PipeProducerResponse response = producerService.produceRecordSynchronous(request);
+        PipeProducerResponse response = producerService.produceRecordASynch(request);
         
         return response;
     }

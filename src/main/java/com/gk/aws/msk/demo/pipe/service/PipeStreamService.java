@@ -21,6 +21,7 @@ public class PipeStreamService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PipeStreamService.class);
 
 	private KafkaConfiguration kafkaConfiguration;
+	private TranslateTextService translateTextService;
 
 	private KafkaStreams streams = null;
 	private Topology topology = null;
@@ -31,9 +32,11 @@ public class PipeStreamService {
 	private String OUTPUT_TOPIC;
 
 	@Autowired
-	public PipeStreamService(KafkaConfiguration kafkaConfiguration) {
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService) {
 		super();
 		this.kafkaConfiguration = kafkaConfiguration;
+		this.translateTextService = translateTextService;
+		
 		INPUT_TOPIC = kafkaConfiguration.getInputTopic();
 		OUTPUT_TOPIC = kafkaConfiguration.getOutputTopic();
 
@@ -43,7 +46,9 @@ public class PipeStreamService {
 		props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		
 		// Kafka Stream
-		builder.stream(INPUT_TOPIC).to(OUTPUT_TOPIC);
+		builder.stream(INPUT_TOPIC)
+		.mapValues((record -> translateTextService.translateText((String) record)))
+		.to(OUTPUT_TOPIC);
 		
         topology = builder.build();
         

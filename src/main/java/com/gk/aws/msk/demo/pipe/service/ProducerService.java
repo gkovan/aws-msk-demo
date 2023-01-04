@@ -38,7 +38,7 @@ public class ProducerService {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 "org.apache.kafka.common.serialization.StringSerializer");
 
-        // kafkaProducer = new KafkaProducer<>(props);
+        kafkaProducer = new KafkaProducer<>(props);
     }
 
     private KafkaConfiguration kafkaConfiguration;
@@ -49,7 +49,7 @@ public class ProducerService {
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(kafkaConfiguration.getInputTopic(),
                 request.getKafkaKey(), request.getKafkaBody());
 
-        kafkaProducer = new KafkaProducer<>(props);
+        //kafkaProducer = new KafkaProducer<>(props);
         Future<RecordMetadata> m = kafkaProducer.send(record);
 
         try {
@@ -83,7 +83,7 @@ public class ProducerService {
                 kafkaConfiguration.getInputTopic(),
                 request.getKafkaKey(), request.getKafkaBody());
 
-        kafkaProducer = new KafkaProducer<>(props);
+        //kafkaProducer = new KafkaProducer<>(props);
 
         kafkaProducer.send(record, new Callback() {
 
