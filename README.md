@@ -58,6 +58,16 @@ Start a kafka producer and consumer as follows:
 ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
 ```
 
+Start a kafka producer and consumer as follows:
+
+```
+./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-pipe-input
+```
+
+```
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
+```
+
 ## Java code to get a secret
 
 ```
