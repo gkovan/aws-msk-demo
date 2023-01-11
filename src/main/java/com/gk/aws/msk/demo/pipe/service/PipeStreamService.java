@@ -7,6 +7,7 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
+import org.apache.kafka.streams.kstream.KStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,22 @@ public class PipeStreamService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PipeStreamService.class);
 
 	private KafkaConfiguration kafkaConfiguration;
+	private TranslateTextService translateTextService;
+
+	private KafkaStreams streams = null;
+	private Topology topology = null;
+	private final StreamsBuilder builder = new StreamsBuilder();
+	private final Properties props = new Properties();
 
 	private String INPUT_TOPIC;
 	private String OUTPUT_TOPIC;
 
 	@Autowired
-	public PipeStreamService(KafkaConfiguration kafkaConfiguration) {
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService) {
 		super();
 		this.kafkaConfiguration = kafkaConfiguration;
+		this.translateTextService = translateTextService;
+		
 		INPUT_TOPIC = kafkaConfiguration.getInputTopic();
 		OUTPUT_TOPIC = kafkaConfiguration.getOutputTopic();
 
@@ -36,19 +45,15 @@ public class PipeStreamService {
 		props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		
-		builder.stream(INPUT_TOPIC).to(OUTPUT_TOPIC);
+		// Kafka Stream
+		builder.stream(INPUT_TOPIC)
+		.mapValues((record -> translateTextService.translateText((String) record)))
+		.to(OUTPUT_TOPIC);
 		
         topology = builder.build();
         
         streams = new KafkaStreams(topology, props);
 	}
-
-	private KafkaStreams streams = null;
-	private Topology topology = null;
-	private final StreamsBuilder builder = new StreamsBuilder();
-	private final Properties props = new Properties();
-	
-
 	
 	public Topology getTopology() {
 		return topology;

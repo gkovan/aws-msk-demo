@@ -1,9 +1,13 @@
-# aws-msk-demo gk
+# aws-msk-demo
 aws msk demo app
 
 ## Kafka setup on local laptop
 
-Intall Kafka 2.6.2
+Intall Kafka 2.8.1
+
+```
+wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.13-2.8.1.tgz
+```
 
 Start Zookeeper
 
@@ -51,6 +55,16 @@ Start a kafka producer and consumer as follows:
 ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-pipe-input
 ```
 ```bash
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
+```
+
+Start a kafka producer and consumer as follows:
+
+```
+./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-pipe-input
+```
+
+```
 ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
 ```
 
