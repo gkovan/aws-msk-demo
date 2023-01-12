@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gk.aws.msk.demo.pipe.model.KafkaBody;
 
 @Service
-public class JsonService {
+public class JsonTask {
 
     public KafkaBody convertJsonStringToObject(String kafkaBodyString) {
         KafkaBody kafkaBody = null;

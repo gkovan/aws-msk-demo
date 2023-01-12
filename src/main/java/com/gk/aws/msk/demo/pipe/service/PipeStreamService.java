@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gk.aws.msk.demo.config.KafkaConfiguration;
 import com.gk.aws.msk.demo.pipe.model.KafkaBody;
-import com.gk.aws.msk.demo.pipe.task.JsonService;
+import com.gk.aws.msk.demo.pipe.task.JsonTask;
 
 @Service
 public class PipeStreamService {
@@ -26,7 +26,7 @@ public class PipeStreamService {
 
 	private KafkaConfiguration kafkaConfiguration;
 	private TranslateTextService translateTextService;
-	private JsonService jsonService;
+	private JsonTask jsonService;
 
 	private KafkaStreams streams = null;
 	private Topology topology = null;
@@ -38,7 +38,7 @@ public class PipeStreamService {
 	private String OUTPUT_TOPIC;
 
 	@Autowired
-	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService, JsonService jsonService) {
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService, JsonTask jsonService) {
 		super();
 		this.kafkaConfiguration = kafkaConfiguration;
 		this.translateTextService = translateTextService;
