@@ -4,7 +4,7 @@ public class PipeProducerRequest {
 
     private String kafkaKey;
     private String kafkaHeader;
-    private String kafkaBody;
+    private KafkaBody kafkaBody;
     private boolean synchronousProducer;
 
     public boolean isSynchronousProducer() {
@@ -25,10 +25,10 @@ public class PipeProducerRequest {
     public void setKafkaHeader(String kafkaHeader) {
         this.kafkaHeader = kafkaHeader;
     }
-    public String getKafkaBody() {
+    public KafkaBody getKafkaBody() {
         return kafkaBody;
     }
-    public void setKafkaBody(String kafkaBody) {
+    public void setKafkaBody(KafkaBody kafkaBody) {
         this.kafkaBody = kafkaBody;
     }
     @Override

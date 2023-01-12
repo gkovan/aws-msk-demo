@@ -13,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gk.aws.msk.demo.config.KafkaConfiguration;
+import com.gk.aws.msk.demo.pipe.model.KafkaBody;
 
 @Service
 public class PipeStreamService {
@@ -22,20 +25,23 @@ public class PipeStreamService {
 
 	private KafkaConfiguration kafkaConfiguration;
 	private TranslateTextService translateTextService;
+	private JsonService jsonService;
 
 	private KafkaStreams streams = null;
 	private Topology topology = null;
 	private final StreamsBuilder builder = new StreamsBuilder();
 	private final Properties props = new Properties();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private String INPUT_TOPIC;
 	private String OUTPUT_TOPIC;
 
 	@Autowired
-	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService) {
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService, JsonService jsonService) {
 		super();
 		this.kafkaConfiguration = kafkaConfiguration;
 		this.translateTextService = translateTextService;
+		this.jsonService = jsonService;
 		
 		INPUT_TOPIC = kafkaConfiguration.getInputTopic();
 		OUTPUT_TOPIC = kafkaConfiguration.getOutputTopic();
@@ -47,7 +53,9 @@ public class PipeStreamService {
 		
 		// Kafka Stream
 		builder.stream(INPUT_TOPIC)
-		.mapValues((record -> translateTextService.translateText((String) record)))
+		.mapValues(record -> jsonService.convertJsonStringToObject((String)record))
+		.filter( (key, value) -> value.isTranslate() == true)
+		.mapValues((record -> translateTextService.translateText(record.getText(), record.getSourceLang(), record.getTargetLang())))
 		.to(OUTPUT_TOPIC);
 		
         topology = builder.build();

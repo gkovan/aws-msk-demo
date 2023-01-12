@@ -13,6 +13,8 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gk.aws.msk.demo.config.KafkaConfiguration;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerRequest;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerResponse;
@@ -26,7 +28,8 @@ public class ProducerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProducerService.class);
 
     private Producer<String, String> kafkaProducer = null;
-    Properties props = new Properties();
+    private Properties props = new Properties();
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public ProducerService(KafkaConfiguration kafkaConfiguration) {
@@ -46,8 +49,15 @@ public class ProducerService {
     public PipeProducerResponse produceRecordSynchronous(PipeProducerRequest request) {
         PipeProducerResponse response = new PipeProducerResponse();
 
+        String requestKafkaBodyAsString = null;
+        try {
+            requestKafkaBodyAsString = objectMapper.writeValueAsString(request.getKafkaBody());
+        } catch (JsonProcessingException jpe) {
+            jpe.printStackTrace();
+        }
+
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(kafkaConfiguration.getInputTopic(),
-                request.getKafkaKey(), request.getKafkaBody());
+                request.getKafkaKey(), requestKafkaBodyAsString);
 
         //kafkaProducer = new KafkaProducer<>(props);
         Future<RecordMetadata> m = kafkaProducer.send(record);
@@ -58,7 +68,7 @@ public class ProducerService {
             response.setPartition(Integer.toString(meta.partition()));
             response.setOffset(Long.toString(meta.offset()));
             response.setTopic(meta.topic());
-            response.setKafkaBody(request.getKafkaBody());
+            response.setKafkaBody(request.getKafkaBody().getText());
             response.setKafkaKey(request.getKafkaKey());
             response.setKafkaHeader(request.getKafkaHeader());
             response.setSynchronousProducer(request.isSynchronousProducer());
@@ -75,13 +85,13 @@ public class ProducerService {
         PipeProducerResponse response = new PipeProducerResponse();
 
         response.setSynchronousProducer(request.isSynchronousProducer());
-        response.setKafkaBody(request.getKafkaBody());
+        response.setKafkaBody(request.getKafkaBody().getText());
         response.setKafkaKey(request.getKafkaKey());
         response.setKafkaHeader(request.getKafkaHeader());
 
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(
                 kafkaConfiguration.getInputTopic(),
-                request.getKafkaKey(), request.getKafkaBody());
+                request.getKafkaKey(), request.getKafkaBody().getText());
 
         //kafkaProducer = new KafkaProducer<>(props);
 

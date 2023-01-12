@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gk.aws.msk.demo.config.KafkaConfiguration;
+import com.gk.aws.msk.demo.pipe.model.KafkaBody;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerRequest;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerResponse;
 import com.gk.aws.msk.demo.pipe.service.ProducerService;
@@ -39,7 +40,12 @@ public class ProducerController {
     public PipeProducerResponse produceRecord() {
         // Hard code a request.
         PipeProducerRequest request = new PipeProducerRequest();
-        request.setKafkaBody("this is the kafka body" + UUID.randomUUID().toString());
+        KafkaBody kafkaBody = new KafkaBody();
+        kafkaBody.setText("this is the kafka body" + UUID.randomUUID().toString());
+        kafkaBody.setSourceLang("en");
+        kafkaBody.setTargetLang("fr");
+        kafkaBody.setTranslate(false);
+        request.setKafkaBody(kafkaBody);
         request.setKafkaHeader("this is the kafka header");
         request.setKafkaKey("this is the kafka key");
         request.setSynchronousProducer(true);
@@ -63,7 +69,12 @@ public class ProducerController {
     @GetMapping("/produce-asynch")
     public PipeProducerResponse produceRecordAsync() {
         PipeProducerRequest request = new PipeProducerRequest();
-        request.setKafkaBody("this is the kafka body" + UUID.randomUUID().toString());
+        KafkaBody kafkaBody = new KafkaBody();
+        kafkaBody.setText("this is the kafka body" + UUID.randomUUID().toString());
+        kafkaBody.setSourceLang("en");
+        kafkaBody.setTargetLang("fr");
+        kafkaBody.setTranslate(false);
+        request.setKafkaBody(kafkaBody);
         request.setKafkaHeader("this is the kafka header");
         request.setKafkaKey("this is the kafka key");
         request.setSynchronousProducer(false);

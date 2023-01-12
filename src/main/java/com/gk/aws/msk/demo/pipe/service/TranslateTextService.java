@@ -21,7 +21,7 @@ public class TranslateTextService {
 
     private static final String REGION = "us-east-1";
 
-    public String translateText(String sourceText) {
+    public String translateText(String sourceText, String sourceLang, String targetLang) {
                 // Create credentials using a provider chain. For more information, see
         // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
         AWSCredentialsProvider awsCreds = DefaultAWSCredentialsProviderChain.getInstance();
@@ -33,8 +33,8 @@ public class TranslateTextService {
  
         TranslateTextRequest request = new TranslateTextRequest()
                 .withText(sourceText)
-                .withSourceLanguageCode("en")
-                .withTargetLanguageCode("es");
+                .withSourceLanguageCode(sourceLang)
+                .withTargetLanguageCode(targetLang);
         TranslateTextResult result  = translate.translateText(request);
         LOGGER.info("Translate: " + sourceText + " to: " + result.getTranslatedText());
         return result.getTranslatedText();
