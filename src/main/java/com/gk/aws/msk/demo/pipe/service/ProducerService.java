@@ -58,10 +58,18 @@ public class ProducerService {
 
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(kafkaConfiguration.getInputTopic(),
                 request.getKafkaKey(), requestKafkaBodyAsString);
+        
+        // add kafka header 
+        if ( request.getKafkaHeader() != null && request.getKafkaHeader().contains("=")) {
+            String[] keyValPair = request.getKafkaHeader().split("=");
+            // kafka header added here
+            record.headers().add(keyValPair[0], keyValPair[1].getBytes());
+        }
 
-        //kafkaProducer = new KafkaProducer<>(props);
+        // send the record to the kafka broker
         Future<RecordMetadata> m = kafkaProducer.send(record);
 
+        // process the response from the broker
         try {
             RecordMetadata meta = m.get();
             response.setStatus("SUCCESS");
@@ -89,12 +97,19 @@ public class ProducerService {
         response.setKafkaKey(request.getKafkaKey());
         response.setKafkaHeader(request.getKafkaHeader());
 
+        // Create the record to produce
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(
                 kafkaConfiguration.getInputTopic(),
                 request.getKafkaKey(), request.getKafkaBody().getText());
 
-        //kafkaProducer = new KafkaProducer<>(props);
+        // add kafka header 
+        if ( request.getKafkaHeader() != null && request.getKafkaHeader().contains("=")) {
+            String[] keyValPair = request.getKafkaHeader().split("=");
+            // kafka header added here
+            record.headers().add(keyValPair[0], keyValPair[1].getBytes());
+        }
 
+        // send the record to the kafka broker asynchronously
         kafkaProducer.send(record, new Callback() {
 
             @Override
