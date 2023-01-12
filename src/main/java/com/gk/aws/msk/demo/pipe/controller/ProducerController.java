@@ -41,13 +41,13 @@ public class ProducerController {
         // Hard code a request.
         PipeProducerRequest request = new PipeProducerRequest();
         KafkaBody kafkaBody = new KafkaBody();
-        kafkaBody.setText("this is the kafka body" + UUID.randomUUID().toString());
+        kafkaBody.setText("hello my name is Gerry. This is a synchronous producer.");
         kafkaBody.setSourceLang("en");
         kafkaBody.setTargetLang("fr");
-        kafkaBody.setTranslate(false);
+        kafkaBody.setTranslate(true);
         request.setKafkaBody(kafkaBody);
-        request.setKafkaHeader("this is the kafka header");
-        request.setKafkaKey("this is the kafka key");
+        request.setKafkaHeader("source=ProducerController");
+        request.setKafkaKey("en-fr");
         request.setSynchronousProducer(true);
 
         PipeProducerResponse response = producerService.produceRecordSynchronous(request);
@@ -70,13 +70,13 @@ public class ProducerController {
     public PipeProducerResponse produceRecordAsync() {
         PipeProducerRequest request = new PipeProducerRequest();
         KafkaBody kafkaBody = new KafkaBody();
-        kafkaBody.setText("this is the kafka body" + UUID.randomUUID().toString());
+        kafkaBody.setText("Hello my name is Gerry.  This is a asynchronous producer.");
         kafkaBody.setSourceLang("en");
         kafkaBody.setTargetLang("fr");
         kafkaBody.setTranslate(false);
         request.setKafkaBody(kafkaBody);
-        request.setKafkaHeader("this is the kafka header");
-        request.setKafkaKey("this is the kafka key");
+        request.setKafkaHeader("source=ProducerController");
+        request.setKafkaKey("en-fr");
         request.setSynchronousProducer(false);
         PipeProducerResponse response = producerService.produceRecordASynch(request);      
         return response;
