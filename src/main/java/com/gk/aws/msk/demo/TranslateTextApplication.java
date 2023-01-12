@@ -10,7 +10,7 @@ import com.amazonaws.services.translate.AmazonTranslateClient;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
 
-public class TranslateText {
+public class TranslateTextApplication {
     
     private static final String REGION = "us-east-1";
  
