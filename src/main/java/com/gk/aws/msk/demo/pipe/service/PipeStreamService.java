@@ -26,7 +26,7 @@ public class PipeStreamService {
 
 	private KafkaConfiguration kafkaConfiguration;
 	private TranslateTextService translateTextService;
-	private JsonTask jsonService;
+	private JsonTask jsonTask;
 
 	private KafkaStreams streams = null;
 	private Topology topology = null;
@@ -38,11 +38,11 @@ public class PipeStreamService {
 	private String OUTPUT_TOPIC;
 
 	@Autowired
-	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService, JsonTask jsonService) {
+	public PipeStreamService(KafkaConfiguration kafkaConfiguration, TranslateTextService translateTextService, JsonTask jsonTask) {
 		super();
 		this.kafkaConfiguration = kafkaConfiguration;
 		this.translateTextService = translateTextService;
-		this.jsonService = jsonService;
+		this.jsonTask = jsonTask;
 		
 		INPUT_TOPIC = kafkaConfiguration.getInputTopic();
 		OUTPUT_TOPIC = kafkaConfiguration.getOutputTopic();
@@ -54,7 +54,7 @@ public class PipeStreamService {
 		
 		// Kafka Stream
 		builder.stream(INPUT_TOPIC)
-		.mapValues(record -> jsonService.convertJsonStringToObject((String)record))
+		.mapValues(record -> jsonTask.convertJsonStringToObject((String)record))
 		.filter( (key, value) -> value.isTranslate() == true)
 		.mapValues((record -> translateTextService.translateText(record.getText(), record.getSourceLang(), record.getTargetLang())))
 		.to(OUTPUT_TOPIC);
