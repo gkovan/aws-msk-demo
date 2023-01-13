@@ -97,10 +97,17 @@ public class ProducerService {
         response.setKafkaKey(request.getKafkaKey());
         response.setKafkaHeader(request.getKafkaHeader());
 
+        String requestKafkaBodyAsString = null;
+        try {
+            requestKafkaBodyAsString = objectMapper.writeValueAsString(request.getKafkaBody());
+        } catch (JsonProcessingException jpe) {
+            jpe.printStackTrace();
+        }
+
         // Create the record to produce
         ProducerRecord<String, String> record = new ProducerRecord<String, String>(
                 kafkaConfiguration.getInputTopic(),
-                request.getKafkaKey(), request.getKafkaBody().getText());
+                request.getKafkaKey(), requestKafkaBodyAsString);
 
         // add kafka header 
         if ( request.getKafkaHeader() != null && request.getKafkaHeader().contains("=")) {

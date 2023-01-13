@@ -12,7 +12,9 @@ import com.gk.aws.msk.demo.config.KafkaConfiguration;
 import com.gk.aws.msk.demo.pipe.model.KafkaBody;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerRequest;
 import com.gk.aws.msk.demo.pipe.model.PipeProducerResponse;
+import com.gk.aws.msk.demo.pipe.model.twitter.TwitterResponse;
 import com.gk.aws.msk.demo.pipe.service.ProducerService;
+import com.gk.aws.msk.demo.pipe.service.TwitterService;
 
 @RestController
 public class ProducerController {
@@ -20,11 +22,13 @@ public class ProducerController {
     KafkaConfiguration kafkaConfiguration;
 
     private ProducerService producerService;
+    private TwitterService twitterService;
 
     @Autowired
-    public ProducerController(KafkaConfiguration kafkaConfiguration, ProducerService producerService) {
+    public ProducerController(KafkaConfiguration kafkaConfiguration, ProducerService producerService, TwitterService twitterService) {
         this.kafkaConfiguration = kafkaConfiguration;
         this.producerService = producerService;
+        this.twitterService = twitterService;
     }
 
 
@@ -88,6 +92,30 @@ public class ProducerController {
         PipeProducerResponse response = producerService.produceRecordASynch(request);
         
         return response;
+    }
+
+    @GetMapping("/twitter") 
+    public String producerTwitter() {
+
+        TwitterResponse twitterResponse = twitterService.getTweets();
+        twitterResponse.getData().forEach(dataTweet -> {
+
+            PipeProducerRequest request = new PipeProducerRequest();
+            KafkaBody kafkaBody = new KafkaBody();
+            kafkaBody.setText(dataTweet.getText());
+            kafkaBody.setSourceLang("fr");
+            kafkaBody.setTargetLang("en");
+            kafkaBody.setTranslate(true);
+            request.setKafkaBody(kafkaBody);
+            request.setKafkaHeader("source=twitter");
+            request.setKafkaKey("fr-en");
+            request.setSynchronousProducer(false);
+            PipeProducerResponse response = producerService.produceRecordASynch(request); 
+
+            System.out.println(dataTweet.getText());
+        });
+
+        return "Success";
     }
 
     
