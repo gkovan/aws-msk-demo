@@ -67,11 +67,11 @@ public class ProducerService {
         }
 
         // send the record to the kafka broker
-        Future<RecordMetadata> m = kafkaProducer.send(record);
+        Future<RecordMetadata> recordMetaData = kafkaProducer.send(record);
 
         // process the response from the broker
         try {
-            RecordMetadata meta = m.get();
+            RecordMetadata meta = recordMetaData.get();
             response.setStatus("SUCCESS");
             response.setPartition(Integer.toString(meta.partition()));
             response.setOffset(Long.toString(meta.offset()));
@@ -120,15 +120,15 @@ public class ProducerService {
         kafkaProducer.send(record, new Callback() {
 
             @Override
-            public void onCompletion(RecordMetadata m, Exception e) {
+            public void onCompletion(RecordMetadata recordMetaData, Exception e) {
                 if (e != null) {
                     LOGGER.info("Exception producing a record to topic.");
                     e.printStackTrace();
                 } else {
                     response.setStatus("SUCCESS");
-                    response.setPartition(Integer.toString(m.partition()));
-                    response.setOffset(Long.toString(m.offset()));
-                    response.setTopic(m.topic());             
+                    response.setPartition(Integer.toString(recordMetaData.partition()));
+                    response.setOffset(Long.toString(recordMetaData.offset()));
+                    response.setTopic(recordMetaData.topic());             
                     LOGGER.info("Produced record to kafka topic:" + response.toString());
                 }
             }
