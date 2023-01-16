@@ -36,7 +36,6 @@ public class TwitterService {
         String twitterResponseString = null;
         try {
             twitterResponseString = getTweets("1976143068", bearerToken);
-            System.out.println("GKGKGK" + bearerToken);
             System.out.println(twitterResponseString);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();

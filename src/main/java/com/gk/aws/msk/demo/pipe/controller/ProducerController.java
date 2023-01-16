@@ -70,7 +70,7 @@ public class ProducerController {
     /*
      * HTTP GET request for testing purposes.  Request is hard coded.
      */
-    @GetMapping("/produce-asynch")
+    @GetMapping("/producer-asynch")
     public PipeProducerResponse produceRecordAsync() {
         PipeProducerRequest request = new PipeProducerRequest();
         KafkaBody kafkaBody = new KafkaBody();
@@ -86,7 +86,7 @@ public class ProducerController {
         return response;
     }
 
-    @PostMapping("/produce-asynch")
+    @PostMapping("/producer-asynch")
     public PipeProducerResponse produceRecordAsynch(@RequestBody PipeProducerRequest request) {
 
         PipeProducerResponse response = producerService.produceRecordASynch(request);
