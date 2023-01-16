@@ -9,6 +9,8 @@ Intall Kafka 2.8.1
 wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.13-2.8.1.tgz
 ```
 
+Unzip into a folder on your machine.
+
 Start Zookeeper
 
 ```bash
@@ -20,21 +22,28 @@ Start Kafka server/broker
 ./bin/kafka-server-start.sh config/server.properties
 ```
 
+
 ## Useful Kafka commands
+
+Set Kafka specific environment variables:
+```
+export BOOTSTRAP_SERVER=localhost:9092
+export ZOOKEEPER=localhost:2181
+```
 
 Describe Kafka topics
 ```bash
-./bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
+./bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --describe
 ```
 
 List Kafka topics
 ```bash
-./bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+./bin/kafka-topics.sh --bootstrap-server $ZOOKEEPER --list
 ```
 
 Delete Kafka topic
 ```bash
-./bin/kafka-topics.sh --zookeeper localhost:2181 --delete --topic demo
+./bin/kafka-topics.sh --zookeeper $ZOOKEEPER --delete --topic demo
 ```
 
 ## Pipe Streaming Kafka example 
@@ -43,32 +52,77 @@ The pipe stream app basically takes the value on the input topic and puts it on 
 For the pipe stream app to work, the following topics needs to be created:
 
 ```bash
-./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic streams-pipe-input
+./bin/kafka-topics.sh --create --zookeeper $ZOOKEEPER --replication-factor 1 --partitions 1 --topic streams-pipe-input
 ```
 ```bash
-./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic streams-pipe-output
+./bin/kafka-topics.sh --create --zookeeper $ZOOKEEPER --replication-factor 1 --partitions 1 --topic streams-pipe-output
 ```
 
 Start a kafka producer and consumer as follows:
 
 ```bash
-./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-pipe-input
+./bin/kafka-console-producer.sh --broker-list $BOOTSTRAP_SERVER --topic streams-pipe-input
 ```
+
 ```bash
-./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
+./bin/kafka-console-consumer.sh --bootstrap-server $BOOTSTRAP_SERVER --topic streams-pipe-output --from-beginning
 ```
 
-Start a kafka producer and consumer as follows:
+## Start the streaming service
 
 ```
-./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-pipe-input
+mvn spring-boot:run
 ```
 
+## Kafka Producer endpoints:
+
+Produce a hard code kafka record to the topic
 ```
-./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-pipe-output --from-beginning
+curl localhost:8080/producer
 ```
 
-## Java code to get a secret
+Produce a user specified record to the kafka topic
+```
+curl -X POST \
+  'localhost:8080/producer' \
+  --header 'Accept: */*' \
+  --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "kafkaBody":{
+        "text": "I love Fridays",
+        "sourceLang": "en",
+        "targetLang": "fr",
+        "translate": true
+    },
+    "kafkaKey": "en-fr",
+    "kafkaHeader": "source=postman",
+    "synchronousProducer": true
+  }'
+```
+
+Produce tweets from Emmanuel Macrons (President of France) twitter profile (https://twitter.com/EmmanuelMacron)
+
+
+```
+curl localhost:8080/twitter
+```
+
+Note, the twitterId is hard coded in the the com.gk.aws.msk.demo.service.TwitterService.java file.
+
+For this endpoint to work, the BEARER_TOKEN for the twitter api needs to be set in the environment.
+To get the twitter bearer token, go to:  https://developer.twitter.com/en/portal/projects/1613327011803529216/apps/26520029/keys
+
+Set the bearer token as follows:
+```
+export BEARER_TOKEN=<bearer-token-from-twitter>
+```
+
+
+
+
+
+## Java code to get a secret (NOT APPLICABLE FOR NOW)
 
 ```
 // Use this code snippet in your app.
@@ -134,7 +188,7 @@ public static void getSecret() {
 Requires AWS Java SDK.  See: https://github.com/aws/aws-sdk-java-v2/#using-the-sdk
 
 
-## VS code setup
+## VS code setup (NOT APPLICABLE FOR NOW)
 
 ### define a .env file
 
